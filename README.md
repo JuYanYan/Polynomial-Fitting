@@ -20,4 +20,4 @@ bool PloyFitting(RealNumber *anOut, const RealNumber *x, const RealNumber *y, in
     return true;
 }
 ```
-Or.....You can do it when you want to.
+Or.....You can do it that you want to.
