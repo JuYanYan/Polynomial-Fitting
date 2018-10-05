@@ -1,6 +1,6 @@
 #include "ployfitting.h"
 // 变量交换值
-static inline void swapValue(RealNumber &a, RealNumber &b)
+void swapValue(RealNumber &a, RealNumber &b)
 {
     a = a + b;
     b = a - b;
