@@ -1,10 +1,11 @@
 #include "ployfitting.h"
+#include <stdlib.h>
 // 变量交换值
-void swapValue(RealNumber &a, RealNumber &b)
+void swapValue(RealNumber *a, RealNumber *b)
 {
-    a = a + b;
-    b = a - b;
-    a = a - b;
+    *a = *a + *b;
+    *b = *a - *b;
+    *a = *a - *b;
 }
 // 载入数据到矩阵里面
 void LoadData_Into_Matrix(RealNumber *m, const RealNumber *v, unsigned int anNum, unsigned int inNum)
@@ -49,11 +50,11 @@ void DirectLU(RealNumber *a, RealNumber *x, unsigned int n)
 {
     int          i, r, k, j;
     int          n2;
-    RealNumber      *s, *t;
-    RealNumber       m;
+    RealNumber  *s, *t;
+    RealNumber   m;
     n2 = (int)n + 1;
-    s = new RealNumber[n];
-    t = new RealNumber[n];
+    s = (RealNumber*)malloc(sizeof(RealNumber) * n);
+    t = (RealNumber*)malloc(sizeof(RealNumber) * n);
     for (r = 0; r < (int)n; r++)
     {
         m = 0;
@@ -73,7 +74,7 @@ void DirectLU(RealNumber *a, RealNumber *x, unsigned int n)
         if (j != r)                             // 主元的位置所在行j不是r的话，就调换
         {
             for (i = 0; i < n2; i++)
-                swapValue(*(a + r*n2 + i), *(a + j*n2 + i));
+                swapValue(a + r*n2 + i, a + j*n2 + i);
         }
         for (i = r; i < n2; i++)                // 计算第r行的元素
         {
@@ -103,7 +104,7 @@ void DirectLU(RealNumber *a, RealNumber *x, unsigned int n)
         }
         x[i] = t[i] / *(a + i*n2 + i);
     }
-    delete[] s;
-    delete[] t;
+    free(s);
+    free(t);
 }
 
