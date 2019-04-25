@@ -8,10 +8,10 @@ void swapValue(RealNumber *a, RealNumber *b)
     *a = *a - *b;
 }
 // 载入数据到矩阵里面
-void LoadData_Into_Matrix(RealNumber *m, const RealNumber *v, unsigned int anNum, unsigned int inNum)
+void LoadData_Into_Matrix(RealNumber *m, const RealNumber *v, int anNum, int inNum)
 {
-    unsigned int  i, j, k;
-    RealNumber        t;
+    int        i, j, k;
+    RealNumber t;
     for (i = 0; i < anNum; i++)
     {
         for (j = 0; j < inNum; j++)
@@ -24,10 +24,10 @@ void LoadData_Into_Matrix(RealNumber *m, const RealNumber *v, unsigned int anNum
     }
 }
 // 计算正规方程组的系数矩阵
-void calcNormalEqCof(RealNumber *a, RealNumber *b, const RealNumber *y, unsigned int anNum, unsigned int inNum)
+void calcNormalEqCof(RealNumber *a, RealNumber *b, const RealNumber *y, int anNum, int inNum)
 {
-    unsigned int  i, j, k;
-    RealNumber        t;
+    int         i, j, k;
+    RealNumber  t;
     for (i = 0; i < anNum; i++)
     {
         for (j = 0; j < anNum; j++)
@@ -46,20 +46,20 @@ void calcNormalEqCof(RealNumber *a, RealNumber *b, const RealNumber *y, unsigned
     }
 }
 // 列主元LU分解
-void DirectLU(RealNumber *a, RealNumber *x, unsigned int n)
+void DirectLU(RealNumber *a, RealNumber *x, int n)
 {
     int          i, r, k, j;
     int          n2;
     RealNumber  *s, *t;
     RealNumber   m;
-    n2 = (int)n + 1;
+    n2 = n + 1;
     s = (RealNumber*)malloc(sizeof(RealNumber) * n);
     t = (RealNumber*)malloc(sizeof(RealNumber) * n);
-    for (r = 0; r < (int)n; r++)
+    for (r = 0; r < n; r++)
     {
         m = 0;
         j = r;
-        for (i = r; i < (int)n; i++)            // 选主元
+        for (i = r; i < n; i++)                 // 选主元
         {
             s[i] = *(a + i*n2 + r);
             for (k = 0; k < r; k++)
@@ -92,13 +92,13 @@ void DirectLU(RealNumber *a, RealNumber *x, unsigned int n)
             *(a + i*n2 + r) = *(a + i*n2 + r) / (*(a + r*n2 + r));
         }
     }
-    for (i = 0; i < (int)n; i++)
+    for (i = 0; i < n; i++)
     {
         t[i] = *(a + i*n2 + n);
     }
-    for (i = (int)n - 1; i >= 0; i--)           // 回代法计算出最后的解
+    for (i = n - 1; i >= 0; i--)                // 回代法计算出最后的解
     {
-        for (r = (int)n - 1; r > i; r--)
+        for (r = n - 1; r > i; r--)
         {
             t[i] = t[i] - *(a + i*n2 + r) * x[r];
         }
