@@ -19,7 +19,7 @@ void LoadData_Into_Matrix(RealNumber *m, const RealNumber *v, int anNum, int inN
             t = 1.0;
             for (k = 0; k < i; k++)
                 t = t * v[j];
-            *(m + i*inNum + j) = t;
+            *BUFF2D(m, i, j, inNum) = t;
         }
     }
 }
@@ -34,14 +34,14 @@ void calcNormalEqCof(RealNumber *a, RealNumber *b, const RealNumber *y, int anNu
         {
             t = 0.0;
             for (k = 0; k < inNum; k++)
-                t = t + (*(a + i*inNum + k)*(*(a + j*inNum + k)));
-            *(b + i*(anNum + 1) + j) = t;
+                t = t + (*BUFF2D(a, i, k, inNum) * (*BUFF2D(a, j, k, inNum)));
+            *BUFF2D(b, i, j, anNum + 1) = t;
         }
         t = 0.0;
         for (k = 0; k < inNum; k++)
         {
-            t = t + (y[k] * (*(a + i*inNum + k)));
-            *(b + i*(anNum + 1) + anNum) = t;
+            t = t + (y[k] * (*BUFF2D(a, i, k, inNum)));
+            *BUFF2D(b, i, anNum, anNum + 1) = t;                    // 矩阵增广
         }
     }
 }
@@ -61,9 +61,9 @@ void DirectLU(RealNumber *a, RealNumber *x, int n)
         j = r;
         for (i = r; i < n; i++)                 // 选主元
         {
-            s[i] = *(a + i*n2 + r);
+            s[i] = *BUFF2D(a, i, r, n2);
             for (k = 0; k < r; k++)
-                s[i] = s[i] - ((*(a + i*n2 + k)) * (*(a + k*n2 + r)));
+                s[i] = s[i] - ((*BUFF2D(a, i, k, n2)) * (*BUFF2D(a, k, r, n2)));
             s[i] = s[i] > 0 ? s[i] : -s[i];     // 绝对值
             if (s[i] > m)
             {
@@ -74,37 +74,36 @@ void DirectLU(RealNumber *a, RealNumber *x, int n)
         if (j != r)                             // 主元的位置所在行j不是r的话，就调换
         {
             for (i = 0; i < n2; i++)
-                swapValue(a + r*n2 + i, a + j*n2 + i);
+                swapValue(a + r * n2 + i, a + j * n2 + i);
         }
         for (i = r; i < n2; i++)                // 计算第r行的元素
         {
             for (k = 0; k < r; k++)
             {
-                *(a + r*n2 + i) = *(a + r*n2 + i) - ((*(a + r*n2 + k)) * (*(a + k*n2 + i)));
+                *BUFF2D(a, r, i, n2) = *BUFF2D(a, r, i, n2) - ((*BUFF2D(a, r, k, n2)) * (*BUFF2D(a, k, i, n2)));
             }
         }
         for (i = r + 1; i < n2; i++)            // 计算第r列的元素
         {
             for (k = 0; k < r; k++)
             {
-                *(a + i*n2 + r) = *(a + i*n2 + r) - (*(a + i*n2 + k)) * (*(a + k*n2 + r));
+                *BUFF2D(a, i, r, n2) = *BUFF2D(a, i, r, n2) - (*BUFF2D(a, i, k, n2)) * (*BUFF2D(a, k, r, n2));
             }
-            *(a + i*n2 + r) = *(a + i*n2 + r) / (*(a + r*n2 + r));
+            *BUFF2D(a, i, r, n2) = *BUFF2D(a, i, r, n2) / (*BUFF2D(a, r, r, n2));
         }
     }
     for (i = 0; i < n; i++)
     {
-        t[i] = *(a + i*n2 + n);
+        t[i] = *BUFF2D(a, i, n, n2);
     }
     for (i = n - 1; i >= 0; i--)                // 回代法计算出最后的解
     {
         for (r = n - 1; r > i; r--)
         {
-            t[i] = t[i] - *(a + i*n2 + r) * x[r];
+            t[i] = t[i] - *BUFF2D(a, i, r, n2) * x[r];
         }
-        x[i] = t[i] / *(a + i*n2 + i);
+        x[i] = t[i] / *BUFF2D(a, i, i, n2);
     }
     free(s);
     free(t);
 }
-
