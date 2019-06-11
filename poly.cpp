@@ -1,4 +1,4 @@
-#include "ployfitting.h"
+#include "polyfitting.h"
 #include <stdlib.h>
 // 变量交换值
 void swapValue(RealNumber *a, RealNumber *b)
